@@ -1,0 +1,205 @@
+
+.\" Manpage for Rit.
+.\" Contact <moeinn.com@gmail.com> to correct errors or typos.
+
+.TH Rit "1" "Spring 2020" "The Rit Project" "Rit man page" 
+
+.SH "NAME"
+Rit \- Rename it ! :)
+
+.SH SYNOPSIS
+
+\&\fBRit\fR [\fI\s-1FILE\s0\fR]...[\fI\s-1OPTION\s0\fR]  
+.br
+\n\&\fBRit\fR [\fI\s-1OPTION\s0\fR] [\fI\s-1FILE\s0\fR]  
+.br
+\&\fBRit\fR [\fI\s-1FILE \s0\fR] [\fI\s-1%format abbriviation\s0\fR] [\fI\s-1OPTION\s0\fR]  
+
+.SH DESCRIPTION
+.PP
+Rit rename photo or multiple photo(s) to Time taken .
+
+default time format :
+%Y-%m-%d : 2020-02-11
+.br
+       like         :      IMG*.jpg *png 
+       or           :     /home/moein/Photos/*
+.TP
+\fB\-f\fR, \fB\-\-format\fR
+FORMAT controls the output. [file] [strftime] [-f,--format]
+.br                        
+like      :          IMG.jpg %Y-%m-%d -f       ->  2020-02-11.jpg
+.br 
+or        :          MOV.mp4 %Y-%m-%d%H:%M -f  ->  2020.02.11.11:38.mp4
+.PP
+Interpreted sequences are :
+.TP
+%%
+a literal %
+.TP
+%a
+locale's abbreviated weekday name (e.g., Sun)
+.TP
+%A
+locale's full weekday name (e.g., Sunday)
+.TP
+%b
+locale's abbreviated month name (e.g., Jan)
+.TP
+%B
+locale's full month name (e.g., January)
+.TP
+%c
+locale's date and time (e.g., Thu Mar  3 23:05:25 2005)
+.TP
+%C
+century; like %Y, except omit last two digits (e.g., 20)
+.TP
+%d
+day of month (e.g., 01)
+.TP
+%D
+date; same as %m/%d/%y
+.TP
+%e
+day of month, space padded; same as %_d
+.TP
+%F
+full date; same as %Y\-%m\-%d
+.TP
+%g
+last two digits of year of ISO week number (see %G)
+.TP
+%G
+year of ISO week number (see %V); normally useful only with %V
+.TP
+%h
+same as %b
+.TP
+%H
+hour (00..23)
+.TP
+%I
+hour (01..12)
+.TP
+%j
+day of year (001..366)
+.TP
+%k
+hour, space padded ( 0..23); same as %_H
+.TP
+%l
+hour, space padded ( 1..12); same as %_I
+.TP
+%m
+month (01..12)
+.TP
+%M
+minute (00..59)
+.TP
+%N
+nanoseconds (000000000..999999999)
+.TP
+%p
+locale's equivalent of either AM or PM; blank if not known
+.TP
+%P
+like %p, but lower case
+.TP
+%q
+quarter of year (1..4)
+.TP
+%r
+locale's 12\-hour clock time (e.g., 11:11:04 PM)
+.TP
+%R
+24\-hour hour and minute; same as %H:%M
+.TP
+%s
+seconds since 1970\-01\-01 00:00:00 UTC
+.TP
+%S
+second (00..60)
+.TP
+%T
+time; same as %H:%M:%S
+.TP
+%u
+day of week (1..7); 1 is Monday
+.TP
+%U
+week number of year, with Sunday as first day of week (00..53)
+.TP
+%V
+ISO week number, with Monday as first day of week (01..53)
+.TP
+%w
+day of week (0..6); 0 is Sunday
+.TP
+%W
+week number of year, with Monday as first day of week (00..53)
+.TP
+%x
+locale's date representation (e.g., 12/31/99)
+.TP
+%X
+locale's time representation (e.g., 23:13:48)
+.TP
+%y
+last two digits of year (00..99)
+.TP
+%Y
+year
+.TP
+%z
++hhmm numeric time zone (e.g., \fB\-0400\fR)
+.TP
+%:z
++hh:mm numeric time zone (e.g., \fB\-04\fR:00)
+.TP
+%::z
++hh:mm:ss numeric time zone (e.g., \fB\-04\fR:00:00)
+.TP
+%:::z
+numeric time zone with : to necessary precision (e.g., \fB\-04\fR, +05:30)
+.TP
+%Z
+alphabetic time zone abbreviation (e.g., EDT)
+.PP
+By default, date pads numeric fields with zeroes.
+The following optional flags may follow '%':
+.TP
+\-
+(hyphen) do not pad the field
+.TP
+_
+(underscore) pad with spaces
+.TP
+0
+(zero) pad with zeros
+.TP
+^
+use upper case if possible
+.TP
+#
+.TP 
+\fB\-v\fR, \fB\-\-verbos\fR
+explain what is being done 
+.TP
+\fB\-\-help\fR
+show short help or  display this help and exit
+.TP
+\fB\-\-versions\fR
+version information and exit
+
+.SH AUTHOR
+Written by \(co Moein Halvaei <moeinn.com@gmail.com> 
+.br
+send me your idea and suggestion 
+about this Project that makes me happy : )
+.SH BUGS
+ still fixing :x .
+.br
+.SH SEE ALSO
+rename(2)
+   
