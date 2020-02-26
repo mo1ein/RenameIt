@@ -1,0 +1,197 @@
+#!/usr/bin/python3
+
+
+import os
+import sys
+import time
+import argparse
+import PIL.Image
+import PIL.ExifTags
+from datetime import datetime
+
+
+
+
+class Rename :
+
+    def __init__ (self):
+        #Defualt time format
+        self.format = '%Y-%m-%d' 
+        self.Verbos = False
+        self.fullpath = '' 
+        self.count = 1
+        self.path = []
+        self.shit = []
+        self.args = {}
+        self.dic = {}
+
+    #read Modified DateTime from exif data . 
+    def readMeta(self,f) :
+        img = PIL.Image.open(f)
+        
+        exif = {
+            PIL.ExifTags.TAGS[k]: v
+            for k, v in img._getexif().items()
+            if k in PIL.ExifTags.TAGS
+        }
+        try : 
+
+            realTime = exif['DateTime']
+            t = datetime.strptime(realTime, "%Y:%m:%d %H:%M:%S")
+        except :
+
+            realTime = time.strftime("%Y:%m:%d %H:%M:%S",time.gmtime(os.path.getmtime(f)))
+            t = datetime.strptime(realTime, "%Y:%m:%d %H:%M:%S")
+
+        return t
+
+    def Rit (self):
+
+        if not self.path and self.args['help'] is not True and self.args['version'] is not True :
+            print ('Rit: missing operand \nTry \'Rit --help\'')
+        else :
+                #Sort file by erlier Time
+                for files in self.path :
+
+                    try :
+                        # find full path of file (abstract path)
+                        self.fullpath = os.path.abspath(files) 
+                        exTime = Rename().readMeta(files)
+                        Priority = exTime.strftime("%Y%m%d%H%M%S")
+                        self.dic[Priority] = self.fullpath
+                    
+                    except OSError :
+                        print (
+                                ' Rit: cannot stat \'%s\': '%files
+                                +'No such file or directory'
+                        ) 
+
+                        self.shit.append(files)
+                for i in self.shit : self.path.remove(i)
+                self.dic = dict(sorted(self.dic.items()))
+
+                for item in self.dic :
+
+                        head = os.path.split(self.dic[item])[0] 
+                        # split extention of file .
+                        ext = os.path.splitext(self.dic[item])[1]
+                        exTime = Rename().readMeta(self.dic[item])
+                        
+                        Time = exTime.strftime(self.format)
+                        newname = head  + '/' + Time + ext
+
+                        # if file with newname is exist , try to change it .
+                        while os.path.exists(newname) : 
+                            newname = head + '/' + Time +'_' + str(self.count) + ext
+                            self.count+=1
+
+                        self.count = 1
+                        #Renaming...
+                        os.rename(self.dic[item],newname) 
+
+                        if self.Verbos :
+                            print ( 'Renamed:' , 
+                                    self.fullpath , 
+                                    '->' ,
+                                    newname.split('/')[-1]
+                            )
+                                   
+                if self.Verbos :
+                    print ("[",len(self.path),": Files Renamed]")
+
+    #add switchs whit argparse
+    def get_parser(self) :
+
+        parser = argparse.ArgumentParser(
+                add_help = False ,
+                prog = 'Rit',
+                )
+
+        parser.add_argument (
+                '-v',
+                '--verbos',
+                help="increase output verbosity",
+                action = 'store_true'
+                )
+
+        parser.add_argument (
+                'path',
+                type = str,
+                help="<file path>",
+                nargs = '*'
+                )
+
+        parser.add_argument (
+                '-f',
+                '--format',
+                dest = 'format',
+                help="time unix format ",
+                action = 'store_true'
+                )
+
+        parser.add_argument (
+                '-h',
+                '-help',
+                '--help',
+                help="increase output verbosity",
+                action = 'store_true'
+                )
+
+        parser.add_argument (
+                '--version',
+                help="show version",
+                action = 'store_true'
+                )
+
+        self.args = vars(parser.parse_args())
+        
+        #move path arguments to self.path
+        self.path = self.args['path']
+        
+    #what happen on terminal?! 
+    def cli (self) :
+
+        if self.args['verbos'] :
+            self.Verbos = True
+
+        if self.args['format'] :
+            for item in sys.argv :
+                if '%' in item :
+                    self.format = item
+                    self.path.remove(item)
+
+        if self.args['help'] :
+            print('\nRename It (Version 1.0.0)'
+                  '\nusage: Rit [OPTIONS] [FILE|DIR...]'
+                '\n\nOptions :'
+                  '\n  -h, --help        show this help message and exit '
+                  '\n  -v, --verbos      increase output verbosity '
+                  '\n  -f, --format      time unix format '
+            )
+
+        if self.args['version'] :
+            print('''
+                          ____  _ _   
+                         |  _ \(_) |_ 
+                         | |_) | | __|
+                         |  _ <| | |_ 
+                         |_| \_\_|\__|
+
+                        This is : Rename It
+                        Version : 1.0.0
+                        Built   : comming soon ...
+                         Author : Moein Halvaei
+                         E-Mail : <moeinn.com@gmail.com>
+                      Copyright : (C) 2020  Moein Halvaei
+                        License : GNU General Public License, version 3 (gpl3)
+                    '''
+            )
+
+if __name__ == "__main__" :
+    
+    RenameIt = Rename()
+    RenameIt.get_parser()  
+    RenameIt.cli()
+    RenameIt.Rit()
+
+
