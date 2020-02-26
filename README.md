@@ -19,7 +19,7 @@ Rit [path] [strftime] [switch]
 ```
 like :
 ```
-Rit /home/moein/pics/photo1.jpg ./photo2.png
+Rit /home/moein/pics/photo1.jpg ./photo2.jpg
 ```
 other ways :
 ```
