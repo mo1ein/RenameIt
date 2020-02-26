@@ -10,6 +10,7 @@ git clone https://github.com/mo1ein/RenameIt.git
 ```
 then :
 ```
+cd RenameIt
 python3 setup.py
 ```
 and enjoy it :)
