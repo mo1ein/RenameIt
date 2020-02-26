@@ -23,5 +23,13 @@ Rit /home/moein/pics/photo1.jpg ./photo2.png
 ```
 other ways :
 ```
-Rit /home/moein/lastnight/*jpg Image*.png %c -v -f
+Rit /home/moein/lastnight/*jpg photonew.jpeg %c -v -f
+```
+output : 
+```
+Renamed: /home/moein/lastnight/2019_1.jpg -> Thu Mar 10 05:41:04 2018.jpg
+Renamed: /home/moein/lastnight/2019_1.jpg -> Wed Jan 25 08:41:14 2019.jpg
+Renamed: /home/moein/lastnight/2019_1.jpg -> Sun Dec 01 02:33:16 2020.jpg
+Renamed: /home/moein/pics/photonew.jpeg -> Mon Feb 01 22:41:16 2020.jpeg
+[ 5 : Files Renamed]
 ```
