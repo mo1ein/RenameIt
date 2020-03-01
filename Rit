@@ -16,7 +16,7 @@ class Rename :
 
     def __init__ (self):
         #Defualt time format
-        self.format = '%Y-%m-%d' 
+        self.format = '%F' # short form of -> %Y-%m-%d
         self.Verbos = False
         self.fullpath = '' 
         self.count = 1
@@ -71,7 +71,8 @@ class Rename :
                 self.dic = dict(sorted(self.dic.items()))
 
                 for item in self.dic :
-
+                        #current name
+                        oldname = self.dic[item]
                         head = os.path.split(self.dic[item])[0] 
                         # split extention of file .
                         ext = os.path.splitext(self.dic[item])[1]
@@ -81,7 +82,9 @@ class Rename :
                         newname = head  + '/' + Time + ext
 
                         # if file with newname is exist , try to change it .
-                        while os.path.exists(newname) : 
+                        while os.path.exists(newname) :
+                            if (newname == oldname) : 
+                                break
                             newname = head + '/' + Time +'_' + str(self.count) + ext
                             self.count+=1
 
