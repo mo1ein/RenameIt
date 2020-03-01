@@ -17,20 +17,16 @@ Rit \- Rename it ! :)
 
 .SH DESCRIPTION
 .PP
-Rit rename photo or multiple photo(s) to Time taken .
+Rit rename photo or multiple photo(s) to the Time as were taken .
 
-default time format :
-%Y-%m-%d : 2020-02-11
+when you dont set time format , default time format is : 
 .br
-       like         :      IMG*.jpg *png 
-       or           :     /home/moein/Photos/*
+.br
+        \&\fB%F ( %Y-%m-%d ) : YYYY-MM-DD\fR
+
 .TP
 \fB\-f\fR, \fB\-\-format\fR
-FORMAT controls the output. [file] [strftime] [-f,--format]
-.br                        
-like      :          IMG.jpg %Y-%m-%d -f       ->  2020-02-11.jpg
-.br 
-or        :          MOV.mp4 %Y-%m-%d%H:%M -f  ->  2020.02.11.11:38.mp4
+FORMAT controls the output . see Examples more useful .
 .PP
 Interpreted sequences are :
 .TP
@@ -57,9 +53,6 @@ century; like %Y, except omit last two digits (e.g., 20)
 .TP
 %d
 day of month (e.g., 01)
-.TP
-%D
-date; same as %m/%d/%y
 .TP
 %e
 day of month, space padded; same as %_d
@@ -98,7 +91,7 @@ month (01..12)
 minute (00..59)
 .TP
 %N
-nanoseconds (000000000..999999999)
+nanoseconds (000000000..999999999) #TODO Fix it
 .TP
 %p
 locale's equivalent of either AM or PM; blank if not known
@@ -139,9 +132,6 @@ day of week (0..6); 0 is Sunday
 %W
 week number of year, with Monday as first day of week (00..53)
 .TP
-%x
-locale's date representation (e.g., 12/31/99)
-.TP
 %X
 locale's time representation (e.g., 23:13:48)
 .TP
@@ -150,18 +140,6 @@ last two digits of year (00..99)
 .TP
 %Y
 year
-.TP
-%z
-+hhmm numeric time zone (e.g., \fB\-0400\fR)
-.TP
-%:z
-+hh:mm numeric time zone (e.g., \fB\-04\fR:00)
-.TP
-%::z
-+hh:mm:ss numeric time zone (e.g., \fB\-04\fR:00:00)
-.TP
-%:::z
-numeric time zone with : to necessary precision (e.g., \fB\-04\fR, +05:30)
 .TP
 %Z
 alphabetic time zone abbreviation (e.g., EDT)
@@ -187,19 +165,41 @@ use upper case if possible
 explain what is being done 
 .TP
 \fB\-\-help\fR
-show short help or  display this help and exit
+.br
+show short help 
 .TP
-\fB\-\-versions\fR
+\fB\-\-version\fR
 version information and exit
+.SH EXAMPLES
+Rename simply with default time format :    
 
+        \&\fBRit photo.jpg photo2.jpg\fR
+.br
+output :
+        \&\fB"2020-02-11.jpg" and "2020-03-25.jpg" \fR
+
+Rename with use strftime and see what change verbosity :
+
+        \&\fBRit Photos/* %c -f -v\fR
+.br
+output :
+        \&\fB"Wed Mar 20 08:41:14 2019.jpg"\fR
+
+Rename with strftime and add a name inside it :
+
+        \&\fBRit home/moein/vacation/* Abhar\\ %Y-%b-%d -f -v\fR
+.br        
+output :
+        \&\fB"Abhar 2020-Feb-14.jpg"\fR
+        
 .SH AUTHOR
 Written by \(co Moein Halvaei <moeinn.com@gmail.com> 
 .br
 send me your idea and suggestion 
 about this Project that makes me happy : )
 .SH BUGS
- still fixing :x .
+ Still fixing :D .
 .br
 .SH SEE ALSO
-rename(2)
+mv(1) rename(2)
    
