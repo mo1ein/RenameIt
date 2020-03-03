@@ -93,7 +93,7 @@ class Rename :
                         os.rename(self.dic[item],newname) 
 
                         if self.Verbos :
-                            print ( 'Renamed:' , 
+                            print ( ' Renamed:' , 
                                     self.fullpath , 
                                     '->' ,
                                     newname.split('/')[-1]

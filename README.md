@@ -34,3 +34,10 @@ Renamed: /home/moein/lastnight/2019_1.jpg -> Sun Dec 01 02:33:16 2020.jpg
 Renamed: /home/moein/pics/photonew.jpeg -> Mon Feb 01 22:41:16 2020.jpeg
 [ 5 : Files Renamed]
 ```
+# TODO
+- [x] Creat GUI with PyQt5
+- [ ] Responsive GUI page 
+- [ ] Fix progress bar 
+- [ ] Show selected files  
+- [ ] Window Style 
+
