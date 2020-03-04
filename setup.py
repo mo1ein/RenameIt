@@ -2,7 +2,8 @@
 import os 
 
 #install Rit :))
-os.system('sudo dpkg -i Rit_1.0.0_all.deb')
+os.system('sudo apt install ./Rit_1.0.0_all.deb')
+
 
 # finding current directory
 cwd = os.path.abspath(__file__)
