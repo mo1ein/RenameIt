@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'last.ui'
+# Form implementation generated from reading ui file 'OtherWindow.ui'
 #
-# Created by: PyQt5 UI code generator 5.12.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -10,14 +10,14 @@
 import os
 import sys
 import time
+import PyQt5
 import argparse
 import PIL.Image
 import PIL.ExifTags
 from datetime import datetime
-
-import PyQt5
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog,QMessageBox
 
 #for resolation of 4k displays
@@ -86,7 +86,8 @@ class Rename :
                 self.dic = dict(sorted(self.dic.items()))
 
                 for item in self.dic :
-
+                        #current name
+                        oldname = self.dic[item]
                         head = os.path.split(self.dic[item])[0] 
                         # split extention of file .
                         ext = os.path.splitext(self.dic[item])[1]
@@ -97,13 +98,16 @@ class Rename :
 
                         # if file with newname is exist , try to change it .
                         while os.path.exists(newname) : 
+                            if (newname == oldname) : 
+                                break
                             newname = head + '/' + Time +'_' + str(self.count) + ext
                             self.count+=1
 
                         self.count = 1
                         #Renaming...
                         os.rename(self.dic[item],newname) 
-                        print ( 'Renamed:' , self.fullpath , '->' ,newname.split('/')[-1])
+                        #print ( 'Renamed:' , self.fullpath , '->' ,newname.split('/')[-1])
+                        print ("[",len(self.path),": Files Renamed]")
 #gui class 
 class Ui_MainWindow(Rename):
 
@@ -128,26 +132,27 @@ class Ui_MainWindow(Rename):
         font.setWeight(75)
         font.setStrikeOut(False)
         font.setKerning(True)
+        #Browse button
         self.Browse.setFont(font)
         self.Browse.setMouseTracking(True)
         self.Browse.setObjectName("Browse")
-    
+        #ProgressBar 
         self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
         self.progressBar.setGeometry(QtCore.QRect(170, 410, 321, 41))
-        self.progressBar.setProperty("value", 100)
+        self.progressBar.setProperty("value", 0)
         self.progressBar.setObjectName("progressBar")
+
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(50, 40, 71, 16))
         font = QtGui.QFont()
         font.setPointSize(15)
-
         self.label.setFont(font)
         self.label.setObjectName("label")
+        #ComboBox
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
         self.comboBox.setGeometry(QtCore.QRect(170, 80, 321, 31))
         self.comboBox.setObjectName("comboBox")
-
-        for Items in range(10) : self.comboBox.addItem("")
+        for Items in range(4) : self.comboBox.addItem("")
         
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setGeometry(QtCore.QRect(50, 90, 81, 21))
@@ -169,79 +174,91 @@ class Ui_MainWindow(Rename):
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
-
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Rit"))
         self.Browse.setText(_translate("MainWindow", "Browse"))
         self.Browse.clicked.connect(self.choose)
         self.label.setText(_translate("MainWindow", "File Path :"))
+        #ComboBox Items
         self.comboBox.setItemText(0, _translate("MainWindow", 'YYYY-MM-DD  ->   2020-02-10 (default)'))
         self.comboBox.setItemText(1, _translate("MainWindow", 'YYYY-MM-DD  ->  2020-Feb-25'))
         self.comboBox.setItemText(2, _translate("MainWindow", 'YYYY-MM-DD  ->  2020-Februery-25'))
-        self.comboBox.setItemText(3, _translate("MainWindow", 'YYYY-MM-DD-HH:MM  ->  2020-10-10-09:34 '))
-        self.comboBox.setItemText(4, _translate("MainWindow", 'YYYY-MM-DD-HH:MM  ->  2020-10-10-09:34 '))
-        self.comboBox.setItemText(5, _translate("MainWindow", 'YYYY-MM-DD-HH:MM  ->  2020-10-10-09:34 '))
-        self.comboBox.setItemText(6, _translate("MainWindow", 'YYYY-MM-DD-HH:MM  ->  2020-10-10-09:34 '))
-        self.comboBox.setItemText(7, _translate("MainWindow", 'YYYY-MM-DD-HH:MM  ->  2020-10-10-09:34 '))
+        self.comboBox.setItemText(3, _translate("MainWindow", 'DD MM DD HH:MM:SS YYYY -> Wed Mar 20 08:41:14 2019.jpg'))
+
         self.label_2.setText(_translate("MainWindow", "Time Format :"))
         self.Enter.setText(_translate("MainWindow", "Rit!"))
         self.Enter.clicked.connect(self.showDialog)
+        #default item in combobox
+        self.comboBox.setCurrentIndex(0)
+        self.time_format = '%F' 
+        print ("Format:: ",self.comboBox.currentIndex())
         self.comboBox.currentIndexChanged.connect(self.selectFormat)
-        
+
+   
     def choose (self):
         files = QFileDialog.getOpenFileNames() #TODO some detail works
         self.filename = files[0]
-        print(self.filename)
         for i in self.filename : 
             name = os.path.split(i)[1]
             self.log.append(name)
 
     def selectFormat(self,i):
         print ("Items in the list are :")
-        print ("selection changed ",self.comboBox.currentText())
+        print ("Format:: ",self.comboBox.currentIndex())
         
-        if self.comboBox.currentText() == 'YYYY-MM-DD -> 2020-02-10 (default)' :
-            self.time_format = '%Y-%m-%d' 
+        if self.comboBox.currentIndex() == 0 :
+            self.time_format = '%F' 
 
-        elif self.comboBox.currentText() == 'YYYY-MM-DD  ->  2020-Feb-25' :
+        elif self.comboBox.currentIndex() == 1 :
             self.time_format = '%Y-%b-%d'
 
-        elif self.comboBox.currentText() == 'YYYY-MM-DD  ->  2020-Februery-25' :
+        elif self.comboBox.currentIndex() == 2 :
             self.time_format = '%Y-%B-%d'
 
-        elif self.comboBox.currentText() == 'YYYY-MM-DD-HH:MM  ->  2020-10-10-09:34 ':
+        elif self.comboBox.currentIndex() == 3 :
             self.time_format = '%Y-%m-%d%H:%M'
 
-        #TODO Add valid time format 
-        elif self.comboBox.currentText() == 'YYYY-MM-DD  ->  2020-Feb-25' :
-                    self.time_format = '%Y-%b-%d'
+        elif self.comboBox.currentIndex() == 4 :
+            self.time_format = '%c'
 
-        elif self.comboBox.currentText() == 'YYYY-MM-DD  ->  2020-Feb-25' :
-                    self.time_format = '%Y-%b-%d'
-
-        elif self.comboBox.currentText() == 'YYYY-MM-DD  ->  2020-Feb-25' :
-                    self.time_format = '%Y-%b-%d'
-
+    
     def showDialog(self):
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setText("Are You Sure to Rit files ?")
         msgBox.setWindowTitle("Warning!")
-        msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         msgBox.buttonClicked.connect(self.msgButtonClick)
 
         returnValue = msgBox.exec()
-
-        if returnValue == QMessageBox.Ok:
+        if returnValue == QMessageBox.Yes:
             Rename(self.filename,self.time_format).Rit()
-            print('OK clicked')
+            print('Yes clicked')
+            #demo progressBar #TODO fix it
+            while self.progressBar.value()<100 :
+                self.progressBar.setValue(self.progressBar.value()+1)
+            self.alert()
 
+ 
+    def alert (self ) :
+        msgBox = QMessageBox()
+        msgBox.setIcon(QMessageBox.Information)
+        msgBox.setText('%s Files Renamed :)'%len(self.filename))
+        msgBox.setWindowTitle("Alert")
+        msgBox.setStandardButtons(QMessageBox.Ok)
+        msgBox.buttonClicked.connect(self.msgButtonClick)
+        returnValue = msgBox.exec()
+
+       
     def msgButtonClick(self,i):
        print("Button clicked is:",i.text())
+       print( self.progressBar.value())
+
+
 
 if __name__ == "__main__":
     import sys
@@ -258,12 +275,4 @@ if __name__ == "__main__":
     self.setWindowTitle('Message box')    
     self.show()
     def closeEvent(self, event):
-
-    reply = QMessageBox.question(self, 'Message',
-    "Are you sure to quit?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-
-    if reply == QMessageBox.Yes:
-        event.accept()
-    else:
-        event.ignore()       
-'''
+    '''
