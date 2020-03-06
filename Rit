@@ -37,13 +37,13 @@ class Rename :
         try : 
 
             realTime = exif['DateTime']
-            t = datetime.strptime(realTime, "%Y:%m:%d %H:%M:%S")
+            image_time = datetime.strptime(realTime, "%Y:%m:%d %H:%M:%S")
         except :
 
             realTime = time.strftime("%Y:%m:%d %H:%M:%S",time.gmtime(os.path.getmtime(f)))
-            t = datetime.strptime(realTime, "%Y:%m:%d %H:%M:%S")
+            image_time = datetime.strptime(realTime, "%Y:%m:%d %H:%M:%S")
 
-        return t
+        return image_time
 
     def Rit (self):
 
@@ -67,7 +67,7 @@ class Rename :
                         ) 
 
                         self.shit.append(files)
-                for i in self.shit : self.path.remove(i)
+                for piece_of in self.shit : self.path.remove(piece_of)
                 self.dic = dict(sorted(self.dic.items()))
 
                 for item in self.dic :
@@ -107,20 +107,19 @@ class Rename :
 
         parser = argparse.ArgumentParser(
                 add_help = False ,
-                prog = 'Rit',
+                usage='Rit [-fv] [file[strftime]]',
+                prog = 'Rit'
                 )
 
         parser.add_argument (
                 '-v',
                 '--verbos',
-                help="increase output verbosity",
                 action = 'store_true'
                 )
 
         parser.add_argument (
                 'path',
                 type = str,
-                help="<file path>",
                 nargs = '*'
                 )
 
@@ -128,21 +127,18 @@ class Rename :
                 '-f',
                 '--format',
                 dest = 'format',
-                help="time unix format ",
                 action = 'store_true'
                 )
-
+        
         parser.add_argument (
                 '-h',
                 '-help',
                 '--help',
-                help="increase output verbosity",
                 action = 'store_true'
                 )
-
+       
         parser.add_argument (
                 '--version',
-                help="show version",
                 action = 'store_true'
                 )
 
@@ -162,16 +158,16 @@ class Rename :
                 if '%' in item :
                     self.format = item
                     self.path.remove(item)
-
+        
         if self.args['help'] :
             print('\nRename It (Version 1.0.0)'
                   '\nusage: Rit [OPTIONS] [FILE|DIR...]'
                 '\n\nOptions :'
                   '\n  -h, --help        show this help message and exit '
                   '\n  -v, --verbos      increase output verbosity '
-                  '\n  -f, --format      time unix format '
+                  '\n  --version         show version '
             )
-
+        
         if self.args['version'] :
             print('''
                           ____  _ _   
