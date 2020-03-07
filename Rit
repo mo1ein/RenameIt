@@ -107,8 +107,8 @@ class Rename :
 
         parser = argparse.ArgumentParser(
                 add_help = False ,
-                usage='Rit [-fv] [file[strftime]]',
-                prog = 'Rit'
+                prog = 'Rit',
+                usage='Rit [-fv] [file[strftime]]'
                 )
 
         parser.add_argument (
@@ -165,6 +165,7 @@ class Rename :
                 '\n\nOptions :'
                   '\n  -h, --help        show this help message and exit '
                   '\n  -v, --verbos      increase output verbosity '
+                  '\n  -f, --format      time unix forma '
                   '\n  --version         show version '
             )
         
