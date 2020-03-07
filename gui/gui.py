@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'OtherWindow.ui'
+# Form implementation generated from reading ui file 'last.ui'
 #
-# Created by: PyQt5 UI code generator 5.6
+# Created by: PyQt5 UI code generator 5.12.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -141,6 +141,7 @@ class Ui_MainWindow(Rename):
         self.progressBar.setGeometry(QtCore.QRect(170, 410, 321, 41))
         self.progressBar.setProperty("value", 0)
         self.progressBar.setObjectName("progressBar")
+        self.progressBar.setVisible(False)
 
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(50, 40, 71, 16))
@@ -152,7 +153,7 @@ class Ui_MainWindow(Rename):
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
         self.comboBox.setGeometry(QtCore.QRect(170, 80, 321, 31))
         self.comboBox.setObjectName("comboBox")
-        for Items in range(4) : self.comboBox.addItem("")
+        for Items in range(5) : self.comboBox.addItem("")
         
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setGeometry(QtCore.QRect(50, 90, 81, 21))
@@ -187,7 +188,7 @@ class Ui_MainWindow(Rename):
         self.comboBox.setItemText(0, _translate("MainWindow", 'YYYY-MM-DD  ->   2020-02-10 (default)'))
         self.comboBox.setItemText(1, _translate("MainWindow", 'YYYY-MM-DD  ->  2020-Feb-25'))
         self.comboBox.setItemText(2, _translate("MainWindow", 'YYYY-MM-DD  ->  2020-Februery-25'))
-        self.comboBox.setItemText(3, _translate("MainWindow", 'DD MM DD HH:MM:SS YYYY -> Wed Mar 20 08:41:14 2019.jpg'))
+        self.comboBox.setItemText(3, _translate("MainWindow", 'DD MM DD HH:MM:SS YYYY -> Fri 30 Mar 2020 12:11:14 AM.jpg'))
 
         self.label_2.setText(_translate("MainWindow", "Time Format :"))
         self.Enter.setText(_translate("MainWindow", "Rit!"))
@@ -198,8 +199,8 @@ class Ui_MainWindow(Rename):
         print ("Format:: ",self.comboBox.currentIndex())
         self.comboBox.currentIndexChanged.connect(self.selectFormat)
 
-   
     def choose (self):
+        self.log.clear()
         files = QFileDialog.getOpenFileNames() #TODO some detail works
         self.filename = files[0]
         for i in self.filename : 
@@ -220,10 +221,10 @@ class Ui_MainWindow(Rename):
             self.time_format = '%Y-%B-%d'
 
         elif self.comboBox.currentIndex() == 3 :
-            self.time_format = '%Y-%m-%d%H:%M'
+            self.time_format = '%c'
 
         elif self.comboBox.currentIndex() == 4 :
-            self.time_format = '%c'
+            self.time_format = '%Y-%m-%d-%H:%M'
 
     
     def showDialog(self):
@@ -236,11 +237,13 @@ class Ui_MainWindow(Rename):
 
         returnValue = msgBox.exec()
         if returnValue == QMessageBox.Yes:
-            Rename(self.filename,self.time_format).Rit()
+            Rename(self.filename,self.time_format).Rit()        
+            self.progressBar.setVisible(True)
             print('Yes clicked')
             #demo progressBar #TODO fix it
             while self.progressBar.value()<100 :
                 self.progressBar.setValue(self.progressBar.value()+1)
+            self.progressBar.setVisible(False)
             self.alert()
 
  
@@ -269,10 +272,4 @@ if __name__ == "__main__":
     MainWindow.show()
     sys.exit(app.exec_())
     
-    '''       
-    some shits ...
-    self.setGeometry(300, 300, 250, 150)        
-    self.setWindowTitle('Message box')    
-    self.show()
-    def closeEvent(self, event):
-    '''
+
