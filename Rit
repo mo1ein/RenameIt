@@ -5,18 +5,19 @@ import os
 import sys
 import time
 import argparse
+import jdatetime
 import PIL.Image
 import PIL.ExifTags
 from datetime import datetime
-
-
+from jalali import JalaliFormat
 
 
 class Rename :
 
     def __init__ (self):
         #Defualt time format
-        self.format = '%F' # short form of -> %Y-%m-%d
+        self.format = '%Y-%m-%d' # short form of -> %Y-%m-%d
+        self.jalali = False 
         self.Verbos = False
         self.fullpath = '' 
         self.count = 1
@@ -34,16 +35,31 @@ class Rename :
             for k, v in img._getexif().items()
             if k in PIL.ExifTags.TAGS
         }
-        try : 
+        try :
 
             realTime = exif['DateTime']
+            #because strptime has no str obj ...
             image_time = datetime.strptime(realTime, "%Y:%m:%d %H:%M:%S")
-        except :
+            new = image_time.strftime(self.format)
+            alldate = image_time.strftime("%Y%m%d%H%M%S")
 
+            if self.jalali :
+                alldate = JalaliFormat(image_time,self.format).jsort()
+                new = JalaliFormat(image_time,self.format).jconvert()
+        except :
             realTime = time.strftime("%Y:%m:%d %H:%M:%S",time.gmtime(os.path.getmtime(f)))
             image_time = datetime.strptime(realTime, "%Y:%m:%d %H:%M:%S")
+            new = image_time.strftime(self.format)
+            alldate = image_time.strftime("%Y%m%d%H%M%S")
 
-        return image_time
+            if self.jalali :
+                alldate = JalaliFormat(image_time,self.format).jsort()
+                new = JalaliFormat(image_time,self.format).jconvert()
+        
+        times = new , alldate
+        return times
+
+        
 
     def Rit (self):
 
@@ -55,11 +71,11 @@ class Rename :
 
                     try :
                         # find full path of file (abstract path)
-                        self.fullpath = os.path.abspath(files) 
-                        exTime = Rename().readMeta(files)
-                        Priority = exTime.strftime("%Y%m%d%H%M%S")
-                        self.dic[Priority] = self.fullpath
-                    
+                        self.fullpath = os.path.abspath(files)
+                        Priority = self.readMeta(files)
+                        self.dic[Priority[1]] = self.fullpath ,Priority[0]
+                        print (self.dic[Priority[1]])
+
                     except OSError :
                         print (
                                 ' Rit: cannot stat \'%s\': '%files
@@ -72,13 +88,12 @@ class Rename :
 
                 for item in self.dic :
                         #current name
-                        oldname = self.dic[item]
-                        head = os.path.split(self.dic[item])[0] 
+                        oldname = self.dic[item][0]
+                        head = os.path.split(self.dic[item][0])[0] 
                         # split extention of file .
-                        ext = os.path.splitext(self.dic[item])[1]
-                        exTime = Rename().readMeta(self.dic[item])
+                        ext = os.path.splitext(self.dic[item][0])[1]
                         
-                        Time = exTime.strftime(self.format)
+                        Time =self.dic[item][1] 
                         newname = head  + '/' + Time + ext
 
                         # if file with newname is exist , try to change it .
@@ -90,7 +105,7 @@ class Rename :
 
                         self.count = 1
                         #Renaming...
-                        os.rename(self.dic[item],newname) 
+                        os.rename(self.dic[item][0],newname) 
 
                         if self.Verbos :
                             print ( ' Renamed:' , 
@@ -129,6 +144,13 @@ class Rename :
                 dest = 'format',
                 action = 'store_true'
                 )
+
+        parser.add_argument (
+                '-j',
+                '--jformat', #jalali format
+                dest = 'jformat',
+                action = 'store_true'
+                )
         
         parser.add_argument (
                 '-h',
@@ -143,7 +165,6 @@ class Rename :
                 )
 
         self.args = vars(parser.parse_args())
-        
         #move path arguments to self.path
         self.path = self.args['path']
         
@@ -159,13 +180,21 @@ class Rename :
                     self.format = item
                     self.path.remove(item)
         
+        if self.args['jformat'] :
+            self.jalali = True
+            for item in sys.argv :
+                if '%' in item :
+                    self.format = item
+                    self.path.remove(item)
+                   
         if self.args['help'] :
             print('\nRename It (Version 1.0.0)'
                   '\nusage: Rit [OPTIONS] [FILE|DIR...]'
                 '\n\nOptions :'
                   '\n  -h, --help        show this help message and exit '
                   '\n  -v, --verbos      increase output verbosity '
-                  '\n  -f, --format      time unix forma '
+                  '\n  -f, --format      time unix format '
+                  '\n  -j, --jformat     jalali time unix format '
                   '\n  --version         show version '
             )
         

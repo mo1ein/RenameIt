@@ -36,7 +36,7 @@ Renamed: /home/moein/pics/photonew.jpeg -> Mon Feb 01 22:41:16 2020.jpeg
 ```
 # TODO
 - [x] Creat GUI with PyQt5
-- [ ] Jalali Date 
+- [x] Jalali Date 
 - [ ] Responsive GUI page 
 - [ ] Fix progress bar 
 - [ ] Show selected files  
