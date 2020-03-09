@@ -2,6 +2,10 @@
 ## Rit is a linux command to rename photos to the time as they were taken .
 ### Getting Started
 
+### Dependencies
+
+```pip install persiantools ```
+
 ### Install 
 
 first you must clone :
