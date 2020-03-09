@@ -5,7 +5,6 @@ import os
 import sys
 import time
 import argparse
-import jdatetime
 import PIL.Image
 import PIL.ExifTags
 from datetime import datetime
@@ -16,7 +15,7 @@ class Rename :
 
     def __init__ (self):
         #Defualt time format
-        self.format = '%Y-%m-%d' # short form of -> %Y-%m-%d
+        self.format = '%Y-%m-%d'
         self.jalali = False 
         self.Verbos = False
         self.fullpath = '' 

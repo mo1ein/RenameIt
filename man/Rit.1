@@ -17,18 +17,31 @@ Rit \- Rename it ! :)
 
 .SH DESCRIPTION
 .PP
-Rit rename photo or multiple photo(s) to the Time as were taken .
-
-when you dont set time format , default time format is : 
-.br
-.br
+Rit rename photo or multiple photo(s) to the Time as were taken with strftime .
+.PP
+For example you are on vacation and you took more than 200 
+pictures , some pictures are taken by canon camera and the 
+rest of taken by your iphone and after the vacation you 
+transfer data to your laptop or PC then you seen every device 
+have own type of name format so when you move pictures in 1 
+folder you see some dirty Rit rename it by first pic and 
+with your favourite time format =))
+.PP
+When you dont set time format , default time format is : 
+.PP
         \&\fB%F ( %Y-%m-%d ) : YYYY-MM-DD\fR
 
 .TP
 \fB\-f\fR, \fB\-\-format\fR
 FORMAT controls the output . see Examples more useful .
+.TP
+\fB\-j\fR, \fB\-\-jformat\fR
+jalali format 
+.TP 
+\fB\-v\fR, \fB\-\-verbos\fR
+explain what is being done 
 .PP
-Interpreted sequences are :
+\fB\Interpreted sequences are :\fR
 .TP
 %%
 a literal %
@@ -160,9 +173,63 @@ _
 use upper case if possible
 .TP
 #
-.TP 
-\fB\-v\fR, \fB\-\-verbos\fR
-explain what is being done 
+.PP
+\fB\Jalali time format :\fR
+.TP
+%a
+locale's abbreviated weekday name (e.g., Yek)
+.TP
+%A
+locale's full weekday name (e.g., Yekshanbe)
+.TP
+%b
+locale's abbreviated month name (e.g., Far)
+.TP
+%B
+locale's full month name (e.g., Farvardin)
+.TP
+%c
+locale's date and time (e.g., Yekshanbeh 20 Ordibehesht 1399 23:05:25 )
+.TP
+%d
+day of month (e.g, 01)
+.TP
+%H 
+hour (00..23)
+.TP
+%I
+hour (01..12)
+.TP
+%j
+day of year (001..366)
+.TP
+%m
+month (01..12)
+.TP
+%M 
+minute (00..59)
+.TP
+%p 
+locale's equivalent of either AM or PM; blank if not known
+.TP
+%S
+second (00..60)
+.TP
+%U
+week number of year, with Shanbeh as first day of week (00..53)
+.TP
+%w
+day of week (0..6); 1 is Yekshanbeh
+.TP
+%W
+week number of year, with Doshanbeh as first day of week (00..53)
+.TP
+%X     
+locale's time representation (e.g., 23:13:48)
+.TP
+%Y
+year
+
 .TP
 \fB\-\-help\fR
 .br
@@ -171,6 +238,7 @@ show short help
 \fB\-\-version\fR
 version information and exit
 .SH EXAMPLES
+.PP
 Rename simply with default time format :    
 
         \&\fBRit photo.jpg photo2.jpg\fR
@@ -191,7 +259,22 @@ Rename with strftime and add a name inside it :
 .br        
 output :
         \&\fB"Abhar 2020-Feb-14.jpg"\fR
+.PP
+Rename with jalali time :
         
+        \&\fBRit photo.jpg photo2.jpg -j\fR
+.br
+output :
+        \&\fB"1395-04-31.jpg" and "1399-12-01.jpg"\fR
+
+.PP       
+Rename with jalali time and see what change verbosity :
+
+        \&\fBRit dog.jpg %c -j -v\fR
+.br
+output :
+        \&\fB"Yekshanbeh 20 Ordibehesht 1399 23:12:25.jpg"\fR
+
 .SH AUTHOR
 Written by \(co Moein Halvaei <moeinn.com@gmail.com> 
 .br
