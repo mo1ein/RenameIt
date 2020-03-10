@@ -108,7 +108,7 @@ class Rename :
 
                         if self.Verbos :
                             print ( ' Renamed:' , 
-                                    self.fullpath , 
+                                    self.dic[item][0] ,
                                     '->' ,
                                     newname.split('/')[-1]
                             )
