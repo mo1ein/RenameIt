@@ -4,7 +4,7 @@
 
 ### Dependencies
 
-```pip install persiantools ```
+```pip install persiantools pillow pytz ```
 
 ### Install 
 
