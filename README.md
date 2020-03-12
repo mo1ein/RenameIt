@@ -26,7 +26,7 @@ like :
 ```
 Rit /home/moein/pics/photo1.jpg ./photo2.jpg
 ```
-####Jalali time
+#### Jalali time
 ```
 Rit /home/moein/Pictires/photo.JPG %c -v -j
 ```
@@ -35,7 +35,7 @@ output :
 Renamed: /home/moein/pics/photonew.jpeg -> Yekshanbeh 20 Ordibehesht 1399 23:12:25.JPG
 [ 1 : Files Renamed]
 ```
-other ways :
+#### other ways :
 ```
 Rit /home/moein/lastnight/*jpg photonew.jpeg %c -v -f
 ```
