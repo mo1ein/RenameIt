@@ -26,7 +26,9 @@ setup(
     author_email="moeinn.com@gmail.com",
     packages=['Rit'],
     install_requires=[
-        'persiantool',
+        'persiantools',
+        'pillow',
+        'pytz',
         ],
 
     include_package_data= True ,
