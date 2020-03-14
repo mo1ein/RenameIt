@@ -26,15 +26,23 @@ class Rename :
         self.dic = {}
         self.progress = 0.0
 
-    #read Modified DateTime from exif data . 
+    #read Modified DateTime from exif data 
     def readMeta(self,f) :
         img = PIL.Image.open(f)
-        
-        exif = {
-            PIL.ExifTags.TAGS[k]: v
-            for k, v in img._getexif().items()
-            if k in PIL.ExifTags.TAGS
-        }
+
+        #some photos are damaged and we got error
+        #so use exception
+
+        try:
+            exif = {
+                PIL.ExifTags.TAGS[k]: v
+                for k, v in img._getexif().items()
+                if k in PIL.ExifTags.TAGS
+            }
+
+        except :
+            print('image file is damaged !!! im still trying...')
+
         try :
 
             realTime = exif['DateTime']
@@ -72,11 +80,10 @@ class Rename :
                     self.progress += 1.0 / len(self.path)
 
                     try :
-                        # find full path of file (abstract path)
+                        # find full path of file (absolutized path)
                         self.fullpath = os.path.abspath(files)
                         Priority = self.readMeta(files)
                         self.dic[Priority[1]] = self.fullpath ,Priority[0]
-                        print (self.dic[Priority[1]])
 
                     except OSError :
                         print (
@@ -89,7 +96,7 @@ class Rename :
                 self.dic = dict(sorted(self.dic.items()))
 
                 for item in self.dic :
-                        #current name
+                        # current name
                         oldname = self.dic[item][0]
                         head = os.path.split(self.dic[item][0])[0] 
                         # split extention of file .
@@ -119,7 +126,7 @@ class Rename :
                 if self.Verbos :
                     print ("[",len(self.path),": Files Renamed]")
 
-    #add switchs whit argparse
+    # add switchs whit argparse
     def get_parser(self) :
 
         parser = argparse.ArgumentParser(
@@ -128,18 +135,21 @@ class Rename :
                 usage='Rit [-fv] [file[strftime]]'
                 )
 
+        # verbos
         parser.add_argument (
                 '-v',
                 '--verbos',
                 action = 'store_true'
                 )
 
+        # file argument
         parser.add_argument (
                 'path',
                 type = str,
                 nargs = '*'
                 )
 
+        # time format
         parser.add_argument (
                 '-f',
                 '--format',
@@ -147,13 +157,15 @@ class Rename :
                 action = 'store_true'
                 )
 
+        # jalali time format
         parser.add_argument (
                 '-j',
-                '--jformat', #jalali format
+                '--jformat',
                 dest = 'jformat',
                 action = 'store_true'
                 )
         
+        # help
         parser.add_argument (
                 '-h',
                 '-help',
@@ -161,16 +173,18 @@ class Rename :
                 action = 'store_true'
                 )
        
+        # version
         parser.add_argument (
                 '--version',
                 action = 'store_true'
                 )
 
         self.args = vars(parser.parse_args())
-        #move path arguments to self.path
+
+        # move path arguments to self.path
         self.path = self.args['path']
         
-    #what happen on terminal?! 
+    # what happen on terminal?! 
     def cli (self) :
 
         if self.args['verbos'] :
