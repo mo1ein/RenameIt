@@ -30,13 +30,14 @@ setup(
             "Rit = Rit.Rit:main",
         ],
         "gui_scripts": [
-            # todo
+            "Rit-gui = Rit.gui:main",
         ]
     },
     install_requires=[
         'persiantools',
         'pillow',
         'pytz',
+        'pyqt5',
         ],
 
     include_package_data= True ,
