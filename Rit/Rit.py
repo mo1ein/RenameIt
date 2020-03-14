@@ -8,7 +8,7 @@ import argparse
 import PIL.Image
 import PIL.ExifTags
 from datetime import datetime
-from Rit.jalali import JalaliFormat
+from jalali import JalaliFormat
 
 
 class Rename :
