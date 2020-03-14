@@ -8,7 +8,7 @@ import PIL.ExifTags
 from datetime import datetime
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot, QTimer
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog,QMessageBox
 from Rit.Rit import Rename
 
@@ -20,7 +20,7 @@ if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
         PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
 #gui class 
-class Ui_MainWindow(Rename):
+class Ui_MainWindow(QObject):
 
     def __init__(self) :
         super().__init__()
@@ -145,21 +145,28 @@ class Ui_MainWindow(Rename):
         msgBox.setWindowTitle("Warning!")
         msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         msgBox.buttonClicked.connect(self.msgButtonClick)
-
         returnValue = msgBox.exec()
         if returnValue == QMessageBox.Yes:
-            r = Rename()
-            r.path = self.filename
-            r.format = self.time_format
-            r.Rit()
-            self.progressBar.setVisible(True)
-            print('Yes clicked')
-            #demo progressBar #TODO fix it
-            while self.progressBar.value()<100 :
-                self.progressBar.setValue(self.progressBar.value()+1)
-            self.progressBar.setVisible(False)
-            self.alert()
+            self.rit_thread = RitThread(self.filename, self.time_format)
+            self.rit_thread.started.connect(self.on_rit_start)
+            self.rit_thread.finished.connect(self.on_rit_finish)
+            self.gui_refresher = QTimer()
+            self.gui_refresher.start(100)
+            self.gui_refresher.timeout.connect(self.progressbar_update)
+            self.rit_thread.start()
 
+    @pyqtSlot()
+    def on_rit_start(self):
+        self.progressBar.setVisible(True)
+
+    @pyqtSlot()
+    def on_rit_finish(self):
+        self.progressBar.setVisible(False)
+        self.alert()
+
+    @pyqtSlot()
+    def progressbar_update(self):
+        self.progressBar.setValue(int(100 * self.rit_thread.rename_object.progress))
  
     def alert (self ) :
         msgBox = QMessageBox()
@@ -175,6 +182,19 @@ class Ui_MainWindow(Rename):
        print("Button clicked is:",i.text())
        print( self.progressBar.value())
 
+
+class RitThread(QThread):
+
+    def __init__(self, file_list, time_format):
+        super().__init__()
+        self.file_list = file_list
+        self.time_format = time_format
+
+    def run(self):
+        self.rename_object = Rename()
+        self.rename_object.path = self.file_list
+        self.rename_object.format = self.time_format
+        self.rename_object.Rit()
 
 def main():
 
