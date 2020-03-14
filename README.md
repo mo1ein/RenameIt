@@ -1,6 +1,6 @@
 # Rit 
 ### Rit is a linux command to rename photos to the time as they were taken .
-### You can rename multiple files with strftime and your favourite time format .
+### You can rename multiple files with strftime ,regex and your favourite time format .
 
 ### Install 
 
