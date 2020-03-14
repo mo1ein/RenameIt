@@ -8,7 +8,7 @@ import argparse
 import PIL.Image
 import PIL.ExifTags
 from datetime import datetime
-from jalali import JalaliFormat
+from Rit.jalali import JalaliFormat
 
 
 class Rename :
@@ -215,11 +215,15 @@ class Rename :
                     '''
             )
 
-if __name__ == "__main__" :
-    
+def main():
+
     RenameIt = Rename()
     RenameIt.get_parser()  
     RenameIt.cli()
     RenameIt.Rit()
+
+if __name__ == "__main__" :
+
+    main()
 
 
