@@ -1,12 +1,3 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'last.ui'
-#
-# Created by: PyQt5 UI code generator 5.12.1
-#
-# WARNING! All changes made in this file will be lost!
-
-
 import os
 import sys
 import time
@@ -19,6 +10,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog,QMessageBox
+from Rit.Rit import Rename
 
 #for resolation of 4k displays
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
@@ -27,87 +19,6 @@ if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
 if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
         PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
-#rename class
-class Rename :
-
-    def __init__ (self,path=[],time_format='%Y-%m-%d'):
-        #Defualt time format
-        self.time_format = time_format 
-        self.fullpath = '' 
-        self.count = 1
-        self.path = path
-        self.shit = []
-        self.dic = {}
-
-    #read Modified DateTime from exif data . 
-    def readMeta(self,f) :
-        img = PIL.Image.open(f)
-        
-        exif = {
-            PIL.ExifTags.TAGS[k]: v
-            for k, v in img._getexif().items()
-            if k in PIL.ExifTags.TAGS
-        }
-        try : 
-
-            realTime = exif['DateTime']
-            t = datetime.strptime(realTime, "%Y:%m:%d %H:%M:%S")
-        except :
-
-            realTime = time.strftime("%Y:%m:%d %H:%M:%S",time.gmtime(os.path.getmtime(f)))
-            t = datetime.strptime(realTime, "%Y:%m:%d %H:%M:%S")
-
-        return t
-
-    def Rit (self):
-        print(self.path)
-        if not self.path :
-            print ('path is empty ')
-        else :
-                #Sort file by erlier Time
-                for files in self.path :
-
-                    try :
-                        # find full path of file (abstract path)
-                        self.fullpath = os.path.abspath(files) 
-                        exTime = Rename().readMeta(files)
-                        Priority = exTime.strftime("%Y%m%d%H%M%S")
-                        self.dic[Priority] = self.fullpath
-                    
-                    except OSError :
-                        print (
-                                ' Rit: cannot stat \'%s\': '%files
-                                +'No such file or directory'
-                        ) 
-
-                        self.shit.append(files)
-
-                for i in self.shit : self.path.remove(i)
-                self.dic = dict(sorted(self.dic.items()))
-
-                for item in self.dic :
-                        #current name
-                        oldname = self.dic[item]
-                        head = os.path.split(self.dic[item])[0] 
-                        # split extention of file .
-                        ext = os.path.splitext(self.dic[item])[1]
-                        exTime = Rename().readMeta(self.dic[item])
-                        
-                        Time = exTime.strftime(self.time_format)
-                        newname = head  + '/' + Time + ext
-
-                        # if file with newname is exist , try to change it .
-                        while os.path.exists(newname) : 
-                            if (newname == oldname) : 
-                                break
-                            newname = head + '/' + Time +'_' + str(self.count) + ext
-                            self.count+=1
-
-                        self.count = 1
-                        #Renaming...
-                        os.rename(self.dic[item],newname) 
-                        #print ( 'Renamed:' , self.fullpath , '->' ,newname.split('/')[-1])
-                        print ("[",len(self.path),": Files Renamed]")
 #gui class 
 class Ui_MainWindow(Rename):
 
@@ -237,7 +148,10 @@ class Ui_MainWindow(Rename):
 
         returnValue = msgBox.exec()
         if returnValue == QMessageBox.Yes:
-            Rename(self.filename,self.time_format).Rit()        
+            r = Rename()
+            r.path = self.filename
+            r.format = self.time_format
+            r.Rit()
             self.progressBar.setVisible(True)
             print('Yes clicked')
             #demo progressBar #TODO fix it
