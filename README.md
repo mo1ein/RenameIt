@@ -1,15 +1,13 @@
 # Rit 
-## Rit is a linux command to rename photos to the time as they were taken .
-#### You can rename multiple files with strftime and your favourite time format
-### Getting Started
+### Rit is a linux command to rename photos to the time as they were taken .
+### You can rename multiple files with strftime and your favourite time format .
 
 ### Dependencies
 
-```pip install persiantools pillow pytz ```
++ ```pip install persiantools pillow pytz ```
 
 ### Install 
 
-first you must clone :
 ```
 git clone https://github.com/mo1ein/RenameIt.git && cd RenameIt
 ```
@@ -19,9 +17,9 @@ then :
 and enjoy it :)
 ### Usage
 ```
-Rit [path] [strftime] [switch]
+Rit [path] [strftime] [switches]
 ```
-like :
+### Example
 ```
 Rit /home/moein/pics/photo1.jpg ./photo2.jpg
 ```
