@@ -24,6 +24,7 @@ class Rename :
         self.shit = []
         self.args = {}
         self.dic = {}
+        self.progress = 0.0
 
     #read Modified DateTime from exif data . 
     def readMeta(self,f) :
@@ -67,6 +68,8 @@ class Rename :
         else :
                 #Sort file by erlier Time
                 for files in self.path :
+
+                    self.progress += 1.0 / len(self.path)
 
                     try :
                         # find full path of file (abstract path)

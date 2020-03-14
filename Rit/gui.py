@@ -1,12 +1,3 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'last.ui'
-#
-# Created by: PyQt5 UI code generator 5.12.1
-#
-# WARNING! All changes made in this file will be lost!
-
-
 import os
 import sys
 import time
@@ -17,8 +8,9 @@ import PIL.ExifTags
 from datetime import datetime
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot, QTimer
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog,QMessageBox
+from Rit.Rit import Rename
 
 #for resolation of 4k displays
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
@@ -27,89 +19,8 @@ if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
 if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
         PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
-#rename class
-class Rename :
-
-    def __init__ (self,path=[],time_format='%Y-%m-%d'):
-        #Defualt time format
-        self.time_format = time_format 
-        self.fullpath = '' 
-        self.count = 1
-        self.path = path
-        self.shit = []
-        self.dic = {}
-
-    #read Modified DateTime from exif data . 
-    def readMeta(self,f) :
-        img = PIL.Image.open(f)
-        
-        exif = {
-            PIL.ExifTags.TAGS[k]: v
-            for k, v in img._getexif().items()
-            if k in PIL.ExifTags.TAGS
-        }
-        try : 
-
-            realTime = exif['DateTime']
-            t = datetime.strptime(realTime, "%Y:%m:%d %H:%M:%S")
-        except :
-
-            realTime = time.strftime("%Y:%m:%d %H:%M:%S",time.gmtime(os.path.getmtime(f)))
-            t = datetime.strptime(realTime, "%Y:%m:%d %H:%M:%S")
-
-        return t
-
-    def Rit (self):
-        print(self.path)
-        if not self.path :
-            print ('path is empty ')
-        else :
-                #Sort file by erlier Time
-                for files in self.path :
-
-                    try :
-                        # find full path of file (abstract path)
-                        self.fullpath = os.path.abspath(files) 
-                        exTime = Rename().readMeta(files)
-                        Priority = exTime.strftime("%Y%m%d%H%M%S")
-                        self.dic[Priority] = self.fullpath
-                    
-                    except OSError :
-                        print (
-                                ' Rit: cannot stat \'%s\': '%files
-                                +'No such file or directory'
-                        ) 
-
-                        self.shit.append(files)
-
-                for i in self.shit : self.path.remove(i)
-                self.dic = dict(sorted(self.dic.items()))
-
-                for item in self.dic :
-                        #current name
-                        oldname = self.dic[item]
-                        head = os.path.split(self.dic[item])[0] 
-                        # split extention of file .
-                        ext = os.path.splitext(self.dic[item])[1]
-                        exTime = Rename().readMeta(self.dic[item])
-                        
-                        Time = exTime.strftime(self.time_format)
-                        newname = head  + '/' + Time + ext
-
-                        # if file with newname is exist , try to change it .
-                        while os.path.exists(newname) : 
-                            if (newname == oldname) : 
-                                break
-                            newname = head + '/' + Time +'_' + str(self.count) + ext
-                            self.count+=1
-
-                        self.count = 1
-                        #Renaming...
-                        os.rename(self.dic[item],newname) 
-                        #print ( 'Renamed:' , self.fullpath , '->' ,newname.split('/')[-1])
-                        print ("[",len(self.path),": Files Renamed]")
 #gui class 
-class Ui_MainWindow(Rename):
+class Ui_MainWindow(QObject):
 
     def __init__(self) :
         super().__init__()
@@ -234,18 +145,28 @@ class Ui_MainWindow(Rename):
         msgBox.setWindowTitle("Warning!")
         msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         msgBox.buttonClicked.connect(self.msgButtonClick)
-
         returnValue = msgBox.exec()
         if returnValue == QMessageBox.Yes:
-            Rename(self.filename,self.time_format).Rit()        
-            self.progressBar.setVisible(True)
-            print('Yes clicked')
-            #demo progressBar #TODO fix it
-            while self.progressBar.value()<100 :
-                self.progressBar.setValue(self.progressBar.value()+1)
-            self.progressBar.setVisible(False)
-            self.alert()
+            self.rit_thread = RitThread(self.filename, self.time_format)
+            self.rit_thread.started.connect(self.on_rit_start)
+            self.rit_thread.finished.connect(self.on_rit_finish)
+            self.gui_refresher = QTimer()
+            self.gui_refresher.start(100)
+            self.gui_refresher.timeout.connect(self.progressbar_update)
+            self.rit_thread.start()
 
+    @pyqtSlot()
+    def on_rit_start(self):
+        self.progressBar.setVisible(True)
+
+    @pyqtSlot()
+    def on_rit_finish(self):
+        self.progressBar.setVisible(False)
+        self.alert()
+
+    @pyqtSlot()
+    def progressbar_update(self):
+        self.progressBar.setValue(int(100 * self.rit_thread.rename_object.progress))
  
     def alert (self ) :
         msgBox = QMessageBox()
@@ -262,14 +183,30 @@ class Ui_MainWindow(Rename):
        print( self.progressBar.value())
 
 
+class RitThread(QThread):
 
-if __name__ == "__main__":
-    import sys
+    def __init__(self, file_list, time_format):
+        super().__init__()
+        self.file_list = file_list
+        self.time_format = time_format
+
+    def run(self):
+        self.rename_object = Rename()
+        self.rename_object.path = self.file_list
+        self.rename_object.format = self.time_format
+        self.rename_object.Rit()
+
+def main():
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-    
+
+
+if __name__ == "__main__":
+
+    main()
 
