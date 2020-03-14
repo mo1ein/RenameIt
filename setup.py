@@ -25,6 +25,14 @@ setup(
     author="Moein Halvaei",
     author_email="moeinn.com@gmail.com",
     packages=['Rit'],
+    entry_points={
+        "console_scripts": [
+            "Rit = Rit.Rit:main",
+        ],
+        "gui_scripts": [
+            # todo
+        ]
+    },
     install_requires=[
         'persiantools',
         'pillow',
