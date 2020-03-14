@@ -141,7 +141,7 @@ class Ui_MainWindow(QObject):
     def showDialog(self):
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Information)
-        msgBox.setText("Are You Sure to Rit files ?")
+        msgBox.setText("Are You Sure to Rit files ?\n(%s files selected)"%len(self.filename))
         msgBox.setWindowTitle("Warning!")
         msgBox.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         msgBox.buttonClicked.connect(self.msgButtonClick)
