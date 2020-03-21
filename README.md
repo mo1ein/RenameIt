@@ -5,11 +5,13 @@
 ### Install 
 
 ```
-git clone https://github.com/mo1ein/RenameIt.git && cd RenameIt
+pip install Rit
 ```
-then :
-```python3 setup.py install```
-
+or :
+```
+git clone https://github.com/mo1ein/RenameIt.git && cd RenameIt
+python3 setup.py install
+```
 and enjoy it :)
 ### Usage
 ```
