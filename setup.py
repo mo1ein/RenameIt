@@ -11,12 +11,24 @@ def readme():
         return f.read()
 
 
+# finding current directory
+cwd = os.getcwd()
+
+
+# Creating man page file
+Rit_man_page = cwd + '/man/Rit.1'
+os.system('gzip -f -k -9 "' + Rit_man_page + '"')
+print('man page file is generated!')
+
+
+
+DATA_FILES = [('/usr/share/man/man1/', ['man/Rit.1.gz'])]
 
 
 
 setup(
     name='Rit',
-    version='1.0.0',
+    version='1.0.1',
     description='Rit Rename your photos :)',
     long_description=readme(),
     long_description_content_type="text/markdown",
@@ -25,6 +37,7 @@ setup(
     author="Moein Halvaei",
     author_email="moeinn.com@gmail.com",
     packages=['Rit'],
+    data_files=DATA_FILES,
     entry_points={
         "console_scripts": [
             "Rit = Rit.Rit:main",

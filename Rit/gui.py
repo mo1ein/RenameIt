@@ -10,7 +10,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QThread, QObject, pyqtSignal, pyqtSlot, QTimer
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog,QMessageBox
-from Rit import Rename
+from Rit.Rit import Rename
 
 #for resolation of 4k displays
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
