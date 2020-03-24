@@ -7,9 +7,9 @@ import time
 import argparse
 import PIL.Image
 import PIL.ExifTags
+from PIL import Image
 from datetime import datetime
 from Rit.jalali import JalaliFormat
-
 
 class Rename :
 
@@ -18,8 +18,10 @@ class Rename :
         self.format = '%Y-%m-%d'
         self.jalali = False 
         self.Verbos = False
+        self.recursive = False
         self.fullpath = '' 
         self.count = 1
+        self.cnt = 0
         self.path = []
         self.shit = []
         self.args = {}
@@ -41,7 +43,8 @@ class Rename :
             }
 
         except :
-            print('image file is damaged !!! im still trying...')
+            if self.Verbos :
+                print('The file seems to be damaged!im still trying...')
 
         try :
 
@@ -73,25 +76,51 @@ class Rename :
 
         if not self.path and self.args['help'] is not True and self.args['version'] is not True :
             print ('Rit: missing operand \nTry \'Rit --help\'')
-        else :
-                #Sort file by erlier Time
-                for files in self.path :
 
+        else :
+                for files in self.path :
                     self.progress += 1.0 / len(self.path)
 
                     try :
-                        # find full path of file (absolutized path)
-                        self.fullpath = os.path.abspath(files)
-                        Priority = self.readMeta(files)
-                        self.dic[Priority[1]] = self.fullpath ,Priority[0]
+                        if os.path.isdir(files) :
+                            if self.recursive :
+                                start = os.path.expanduser(files)
+                                #walking...
+                                for root, dirs, Files in os.walk(start, topdown = False):
+                                        for name in Files:
+                                            thing = os.path.join(root, name)
+                                            #check if file image or not
+                                            try :
+                                                img = Image.open(thing)
+                                                # find full path of file (absolutized path)
+                                                self.fullpath = os.path.abspath(thing)
+                                                #Sort file by erlier Time
+                                                Priority = self.readMeta(thing)
+                                                self.dic[Priority[1]] = self.fullpath ,Priority[0]
+                                
+                                            except :
+                                                if self.Verbos :
+                                                    print('not image')
+
+                                
+                                self.shit.append(files)
+                            else :
+                                print("i cant Rit is a directory need -r ")
+                        else:
+                        
+                            # find full path of file (absolutized path)
+                            self.fullpath = os.path.abspath(files)
+                            #Sort file by erlier Time
+                            Priority = self.readMeta(files)
+                            self.dic[Priority[1]] = self.fullpath ,Priority[0]
 
                     except OSError :
-                        print (
-                                ' Rit: cannot stat \'%s\': '%files
-                                +'No such file or directory'
-                        ) 
+                                print (
+                                        ' Rit: cannot stat \'%s\': '%files
+                                        +'No such file or directory'
+                                ) 
 
-                        self.shit.append(files)
+                                self.shit.append(files)
                 for piece_of in self.shit : self.path.remove(piece_of)
                 self.dic = dict(sorted(self.dic.items()))
 
@@ -115,7 +144,7 @@ class Rename :
                         self.count = 1
                         #Renaming...
                         os.rename(self.dic[item][0],newname) 
-
+                        self.cnt+=1
                         if self.Verbos :
                             print ( ' Renamed:' , 
                                     self.dic[item][0] , 
@@ -124,7 +153,7 @@ class Rename :
                             )
                                    
                 if self.Verbos :
-                    print ("[",len(self.path),": Files Renamed]")
+                    print ("[ " , self.cnt ," : Files Renamed ]")
 
     # add switchs whit argparse
     def get_parser(self) :
@@ -132,7 +161,7 @@ class Rename :
         parser = argparse.ArgumentParser(
                 add_help = False ,
                 prog = 'Rit',
-                usage='Rit [-fv] [file[strftime]]'
+                usage='Rit [-fjv] [file[strftime]]'
                 )
 
         # verbos
@@ -147,6 +176,13 @@ class Rename :
                 'path',
                 type = str,
                 nargs = '*'
+                )
+
+        # rename all photos in directories recursivly
+        parser.add_argument (
+                '-r',
+                '--recursive',
+                action = 'store_true'
                 )
 
         # time format
@@ -190,6 +226,9 @@ class Rename :
         if self.args['verbos'] :
             self.Verbos = True
 
+        if self.args['recursive'] :
+            self.recursive = True
+        
         if self.args['format'] :
             for item in sys.argv :
                 if '%' in item :
@@ -207,10 +246,11 @@ class Rename :
             print('\nRename It (Version 1.0.0)'
                   '\nusage: Rit [OPTIONS] [FILE|DIR...]'
                 '\n\nOptions :'
-                  '\n  -h, --help        show this help message and exit '
                   '\n  -v, --verbos      increase output verbosity '
                   '\n  -f, --format      time unix format '
                   '\n  -j, --jformat     jalali time unix format '
+                  '\n  -r, --recursive   rename all photos in directories recursivly'
+                  '\n  -h, --help        show this help message and exit '
                   '\n  --version         show version '
             )
         
@@ -223,7 +263,7 @@ class Rename :
                          |_| \_\_|\__|
 
                         This is : Rename It
-                        Version : 1.0.0
+                        Version : 1.0.1
                         Built   : comming soon ...
                          Author : Moein Halvaei
                          E-Mail : <moeinn.com@gmail.com>
