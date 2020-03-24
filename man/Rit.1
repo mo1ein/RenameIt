@@ -37,6 +37,9 @@ FORMAT controls the output . see Examples more useful .
 .TP
 \fB\-j\fR, \fB\-\-jformat\fR
 jalali format 
+.TP
+\fB\-r\fR, \fB\-\-recursive\fR
+rename directories recursively
 .TP 
 \fB\-v\fR, \fB\-\-verbos\fR
 explain what is being done 
@@ -274,7 +277,17 @@ Rename with jalali time and see what change verbosity :
 .br
 output :
         \&\fB"Yekshanbeh 20 Ordibehesht 1399 23:12:25.jpg"\fR
+.PP       
+Rename directories recursively :
 
+        \&\fBRit -r ~/Pictures %Y-%m -f\fR
+.PP
+You can rename like : 
+
+        \&\fBfind /media/mypics -type f -iname "2020*jpg" | xargs -IX Rit X %c -f\fR
+.br
+or :
+        \&\fBls *jpeg | xargs -IX Rit X %B -j -v\fR
 .SH AUTHOR
 Written by \(co Moein Halvaei <moeinn.com@gmail.com> 
 .br
