@@ -44,10 +44,9 @@ class Rename :
 
         except :
             if self.Verbos :
-                print('The file seems to be damaged!im still trying...')
+                print(' Rit : Oops no meta :]')
 
         try :
-
             realTime = exif['DateTime']
             #because strptime has no str obj ...
             image_time = datetime.strptime(realTime, "%Y:%m:%d %H:%M:%S")
@@ -57,6 +56,7 @@ class Rename :
             if self.jalali :
                 alldate = JalaliFormat(image_time,self.format).jsort()
                 new = JalaliFormat(image_time,self.format).jconvert()
+
         except :
             realTime = time.strftime("%Y:%m:%d %H:%M:%S",time.gmtime(os.path.getmtime(f)))
             image_time = datetime.strptime(realTime, "%Y:%m:%d %H:%M:%S")
@@ -70,12 +70,17 @@ class Rename :
         times = new , alldate
         return times
 
-        
+    def SortTodic(self,things):
+        # find full path of file (absolutized path)
+        self.fullpath = os.path.abspath(things)
+        #Sort file by erlier Time
+        Priority = self.readMeta(things)
+        self.dic[Priority[1]] = self.fullpath ,Priority[0]
 
     def Rit (self):
 
         if not self.path and self.args['help'] is not True and self.args['version'] is not True :
-            print ('Rit: missing operand \nTry \'Rit --help\'')
+            print (' Rit: missing operand \nTry \'Rit --help\'')
 
         else :
                 for files in self.path :
@@ -87,33 +92,22 @@ class Rename :
                                 start = os.path.expanduser(files)
                                 #walking...
                                 for root, dirs, Files in os.walk(start, topdown = False):
-                                        for name in Files:
-                                            thing = os.path.join(root, name)
-                                            #check if file image or not
-                                            try :
-                                                img = Image.open(thing)
-                                                # find full path of file (absolutized path)
-                                                self.fullpath = os.path.abspath(thing)
-                                                #Sort file by erlier Time
-                                                Priority = self.readMeta(thing)
-                                                self.dic[Priority[1]] = self.fullpath ,Priority[0]
-                                
-                                            except :
-                                                if self.Verbos :
-                                                    print('not image')
-
-                                
+                                    for name in Files:
+                                        thing = os.path.join(root, name)
+                                        #check if file image or not
+                                        try :
+                                            img = Image.open(thing)
+                                            self.SortTodic(thing)
+                                        except :
+                                            if self.Verbos :
+                                                print('not image')
+                            
                                 self.shit.append(files)
                             else :
-                                print("i cant Rit is a directory need -r ")
+                                print(" Rit : \'%s\' is directory ; need -r "%(files.split('/')[-1]) )
                         else:
-                        
-                            # find full path of file (absolutized path)
-                            self.fullpath = os.path.abspath(files)
-                            #Sort file by erlier Time
-                            Priority = self.readMeta(files)
-                            self.dic[Priority[1]] = self.fullpath ,Priority[0]
-
+                            self.SortTodic(files) 
+                            
                     except OSError :
                                 print (
                                         ' Rit: cannot stat \'%s\': '%files
@@ -153,7 +147,7 @@ class Rename :
                             )
                                    
                 if self.Verbos :
-                    print ("[ " , self.cnt ," : Files Renamed ]")
+                    print (" [" , self.cnt ," : Files Renamed ]")
 
     # add switchs whit argparse
     def get_parser(self) :
@@ -263,8 +257,7 @@ class Rename :
                          |_| \_\_|\__|
 
                         This is : Rename It
-                        Version : 1.0.1
-                        Built   : comming soon ...
+                        Version : 1.0.2
                          Author : Moein Halvaei
                          E-Mail : <moeinn.com@gmail.com>
                       Copyright : (C) 2020  Moein Halvaei
@@ -280,7 +273,6 @@ def main():
     RenameIt.Rit()
 
 if __name__ == "__main__" :
-
     main()
 
 
