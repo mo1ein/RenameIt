@@ -17,14 +17,14 @@ Rit \- Rename it ! :)
 
 .SH DESCRIPTION
 .PP
-Rit rename photo or multiple photo(s) to the Time as were taken with strftime .
-.PP
+Rit rename photo or multiple photo(s) to the Time as were taken .
+.br
 For example you are on vacation and you took more than 200 
 pictures , some pictures are taken by canon camera and the 
 rest of taken by your iphone and after the vacation you 
 transfer data to your laptop or PC then you seen every device 
 have own type of name format so when you move pictures in 1 
-folder you see some dirty Rit rename it by first pic and 
+folder you see some dirty :( , Rit rename it by first pic and 
 with your favourite time format =))
 .PP
 When you dont set time format , default time format is : 
@@ -45,9 +45,6 @@ rename directories recursively
 explain what is being done 
 .PP
 \fB\Interpreted sequences are :\fR
-.TP
-%%
-a literal %
 .TP
 %a
 locale's abbreviated weekday name (e.g., Sun)
@@ -251,14 +248,14 @@ output :
 
 Rename with use strftime and see what change verbosity :
 
-        \&\fBRit Photos/* %c -f -v\fR
+        \&\fBRit Photos/* %c -fv\fR
 .br
 output :
         \&\fB"Wed Mar 20 08:41:14 2019.jpg"\fR
 
 Rename with strftime and add a name inside it :
 
-        \&\fBRit home/moein/vacation/* Abhar\\ %Y-%b-%d -f -v\fR
+        \&\fBRit home/moein/vacation/* Abhar\\ %Y-%b-%d -fv\fR
 .br        
 output :
         \&\fB"Abhar 2020-Feb-14.jpg"\fR
@@ -273,21 +270,21 @@ output :
 .PP       
 Rename with jalali time and see what change verbosity :
 
-        \&\fBRit dog.jpg %c -j -v\fR
+        \&\fBRit dog.jpg %c -jv\fR
 .br
 output :
         \&\fB"Yekshanbeh 20 Ordibehesht 1399 23:12:25.jpg"\fR
 .PP       
 Rename directories recursively :
 
-        \&\fBRit -r ~/Pictures %Y-%m -f\fR
+        \&\fBRit -r ~/Pictures \fR
 .PP
 You can rename like : 
 
-        \&\fBfind /media/mypics -type f -iname "2020*jpg" | xargs -IX Rit X %c -f\fR
+        \&\fBfind . -type f -iname "2020*jpg" | xargs -IX Rit X %c -f\fR
 .br
 or :
-        \&\fBls *jpeg | xargs -IX Rit X %B -j -v\fR
+        \&\fBls *jpeg | xargs -IX Rit X %B -j\fR
 .SH AUTHOR
 Written by \(co Moein Halvaei <moeinn.com@gmail.com> 
 .br
