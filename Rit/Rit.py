@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-
 import os
+import re
 import sys
 import time
 import argparse
@@ -223,21 +223,18 @@ class Rename :
         if self.args['recursive'] :
             self.recursive = True
         
-        if self.args['format'] :
+        if self.args['format'] or self.args['jformat'] :
+            if self.args['jformat'] :
+                self.jalali = True
+
             for item in sys.argv :
-                if '%' in item :
+                #pattern to find timeformat string (%strftime)
+                if re.match('^%[^\n]*',item) :
                     self.format = item
                     self.path.remove(item)
-        
-        if self.args['jformat'] :
-            self.jalali = True
-            for item in sys.argv :
-                if '%' in item :
-                    self.format = item
-                    self.path.remove(item)
-                   
+
         if self.args['help'] :
-            print('\nRename It (Version 1.0.0)'
+            print('\nRename It (Version 1.0.2)'
                   '\nusage: Rit [OPTIONS] [FILE|DIR...]'
                 '\n\nOptions :'
                   '\n  -v, --verbos      increase output verbosity '

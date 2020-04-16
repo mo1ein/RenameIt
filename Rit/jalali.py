@@ -1,4 +1,5 @@
 #!/bin/python3
+
 from persiantools.jdatetime import JalaliDate, JalaliDateTime
 import datetime, pytz
 
@@ -6,8 +7,8 @@ class JalaliFormat :
     def __init__(self,ti,jformat) :
         self.ti = ti
         self.jformat = jformat
-    #convert to jalali 
 
+    #convert to jalali 
     def jconvert (self):
 
         worldtime = self.ti
