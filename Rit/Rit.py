@@ -71,8 +71,10 @@ class Rename :
         return times
 
     def SortTodic(self,things):
+        
         # find full path of file (absolutized path)
         self.fullpath = os.path.abspath(things)
+
         #Sort file by erlier Time
         Priority = self.readMeta(things)
         self.dic[Priority[1]] = self.fullpath ,Priority[0]
@@ -81,19 +83,26 @@ class Rename :
 
         if not self.path and self.args['help'] is not True and self.args['version'] is not True :
             print (' Rit: missing operand \nTry \'Rit --help\'')
-
         else :
                 for files in self.path :
                     self.progress += 1.0 / len(self.path)
 
                     try :
-                        if os.path.isdir(files) :
-                            if self.recursive :
+                        if os.path.isdir(files) == False:
+                            self.SortTodic(files) 
+                        else:
+                            
+                            if self.recursive == False :
+                                print(" Rit : \'%s\' is directory ; need -r "%(files.split('/')[-1]) )
+                            
+                            else :
                                 start = os.path.expanduser(files)
+
                                 #walking...
                                 for root, dirs, Files in os.walk(start, topdown = False):
                                     for name in Files:
                                         thing = os.path.join(root, name)
+
                                         #check if file image or not
                                         try :
                                             img = Image.open(thing)
@@ -101,12 +110,7 @@ class Rename :
                                         except :
                                             if self.Verbos :
                                                 print('not image')
-                            
                                 self.shit.append(files)
-                            else :
-                                print(" Rit : \'%s\' is directory ; need -r "%(files.split('/')[-1]) )
-                        else:
-                            self.SortTodic(files) 
                             
                     except OSError :
                                 print (
@@ -119,33 +123,34 @@ class Rename :
                 self.dic = dict(sorted(self.dic.items()))
 
                 for item in self.dic :
-                        # current name
-                        oldname = self.dic[item][0]
-                        head = os.path.split(self.dic[item][0])[0] 
-                        # split extention of file .
-                        ext = os.path.splitext(self.dic[item][0])[1]
-                        
-                        Time =self.dic[item][1] 
-                        newname = head  + '/' + Time + ext
+                    # current name
+                    oldname = self.dic[item][0]
+                    head = os.path.split(self.dic[item][0])[0] 
 
-                        # if file with newname is exist , try to change it .
-                        while os.path.exists(newname) :
-                            if (newname == oldname) : 
-                                break
-                            newname = head + '/' + Time +'_' + str(self.count) + ext
-                            self.count+=1
+                    # split extention of file .
+                    ext = os.path.splitext(self.dic[item][0])[1]
+                    Time =self.dic[item][1] 
+                    newname = head  + '/' + Time + ext
 
-                        self.count = 1
-                        #Renaming...
-                        os.rename(self.dic[item][0],newname) 
-                        self.cnt+=1
-                        if self.Verbos :
-                            print ( ' Renamed:' , 
-                                    self.dic[item][0] , 
-                                    '->' ,
-                                    newname.split('/')[-1]
-                            )
-                                   
+                    # if file with newname is exist , try to change it .
+                    while os.path.exists(newname) :
+                        if (newname == oldname) : 
+                            break
+                        newname = head + '/' + Time +'_' + str(self.count) + ext
+                        self.count+=1
+                    self.count = 1
+
+                    #Renaming...
+                    os.rename(self.dic[item][0],newname) 
+                    self.cnt+=1
+
+                    #show log
+                    if self.Verbos :
+                        print ( ' Renamed:' , 
+                                self.dic[item][0] , 
+                                '->' ,
+                                newname.split('/')[-1]
+                        )
                 if self.Verbos :
                     print (" [" , self.cnt ," : Files Renamed ]")
 
