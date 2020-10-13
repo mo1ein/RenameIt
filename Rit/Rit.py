@@ -29,7 +29,7 @@ class Rename :
         self.progress = 0.0
 
     #read Modified DateTime from exif data 
-    def readMeta(self,f) :
+    def readMeta(self, f):
         img = PIL.Image.open(f)
 
         #some photos are damaged and we got error
@@ -53,34 +53,32 @@ class Rename :
             new = image_time.strftime(self.format)
             alldate = image_time.strftime("%Y%m%d%H%M%S")
 
-            if self.jalali :
-                alldate = JalaliFormat(image_time,self.format).jsort()
-                new = JalaliFormat(image_time,self.format).jconvert()
+            if self.jalali:
+                alldate = JalaliFormat(image_time, self.format).jsort()
+                new = JalaliFormat(image_time, self.format).jconvert()
 
         except :
-            realTime = time.strftime("%Y:%m:%d %H:%M:%S",time.gmtime(os.path.getmtime(f)))
+            realTime = time.strftime("%Y:%m:%d %H:%M:%S", time.gmtime(os.path.getmtime(f)))
             image_time = datetime.strptime(realTime, "%Y:%m:%d %H:%M:%S")
             new = image_time.strftime(self.format)
             alldate = image_time.strftime("%Y%m%d%H%M%S")
 
-            if self.jalali :
-                alldate = JalaliFormat(image_time,self.format).jsort()
-                new = JalaliFormat(image_time,self.format).jconvert()
+            if self.jalali:
+                alldate = JalaliFormat(image_time, self.format).jsort()
+                new = JalaliFormat(image_time, self.format).jconvert()
         
         times = new , alldate
         return times
 
-    def SortTodic(self,things):
-        
+    def SortTodic(self, things):
         # find full path of file (absolutized path)
         self.fullpath = os.path.abspath(things)
 
         #Sort file by erlier Time
         Priority = self.readMeta(things)
-        self.dic[Priority[1]] = self.fullpath ,Priority[0]
+        self.dic[Priority[1]] = self.fullpath, Priority[0]
 
-    def Rit (self):
-
+    def Rit(self):
         if not self.path and self.args['help'] is not True and self.args['version'] is not True :
             print (' Rit: missing operand \nTry \'Rit --help\'')
         else :
@@ -91,10 +89,8 @@ class Rename :
                         if os.path.isdir(files) == False:
                             self.SortTodic(files) 
                         else:
-                            
                             if self.recursive == False :
-                                print(" Rit : \'%s\' is directory ; need -r "%(files.split('/')[-1]) )
-                            
+                                print(' Rit : \'{files.split('/')[-1]}\' is directory ; need -r ')
                             else :
                                 start = os.path.expanduser(files)
 
@@ -113,79 +109,76 @@ class Rename :
                                 self.shit.append(files)
                             
                     except OSError :
-                                print (
-                                        ' Rit: cannot stat \'%s\': '%files
-                                        +'No such file or directory'
-                                ) 
-
+                                print(f' Rit: cannot stat \'{files}\': No such file or directory') 
                                 self.shit.append(files)
+
                 for piece_of in self.shit : self.path.remove(piece_of)
                 self.dic = dict(sorted(self.dic.items()))
 
-                for item in self.dic :
+                for item in self.dic:
                     # current name
                     oldname = self.dic[item][0]
                     head = os.path.split(self.dic[item][0])[0] 
 
                     # split extention of file .
                     ext = os.path.splitext(self.dic[item][0])[1]
-                    Time =self.dic[item][1] 
-                    newname = head  + '/' + Time + ext
+                    Time = self.dic[item][1] 
+                    fname = Time + ext
+                    newname = os.path.join(head,fname) 
 
                     # if file with newname is exist , try to change it .
-                    while os.path.exists(newname) :
-                        if (newname == oldname) : 
+                    while os.path.exists(newname):
+                        if (newname == oldname): 
                             break
                         newname = head + '/' + Time +'_' + str(self.count) + ext
-                        self.count+=1
+                        self.count += 1
                     self.count = 1
 
                     #Renaming...
-                    os.rename(self.dic[item][0],newname) 
-                    self.cnt+=1
+                    os.rename(self.dic[item][0], newname) 
+                    self.cnt += 1
 
                     #show log
-                    if self.Verbos :
+                    if self.Verbos:
                         print ( ' Renamed:' , 
-                                self.dic[item][0] , 
-                                '->' ,
+                                self.dic[item][0], 
+                                '->',
                                 newname.split('/')[-1]
                         )
-                if self.Verbos :
-                    print (" [" , self.cnt ," : Files Renamed ]")
+                if self.Verbos:
+                    print (' [', self.cnt, ' : Files Renamed ]')
 
     # add switchs whit argparse
-    def get_parser(self) :
-
+    def get_parser(self):
         parser = argparse.ArgumentParser(
-                add_help = False ,
+                add_help = False,
                 prog = 'Rit',
                 usage='Rit [-fjv] [file[strftime]]'
                 )
 
         # verbos
-        parser.add_argument (
+        parser.add_argument(
                 '-v',
                 '--verbos',
                 action = 'store_true'
                 )
 
         # file argument
-        parser.add_argument (
+        parser.add_argument(
                 'path',
                 type = str,
                 nargs = '*'
                 )
 
         # rename all photos in directories recursivly
-        parser.add_argument (
+        parser.add_argument(
                 '-r',
                 '--recursive',
                 action = 'store_true'
                 )
 
         # time format
-        parser.add_argument (
+        parser.add_argument(
                 '-f',
                 '--format',
                 dest = 'format',
@@ -193,7 +186,7 @@ class Rename :
                 )
 
         # jalali time format
-        parser.add_argument (
+        parser.add_argument(
                 '-j',
                 '--jformat',
                 dest = 'jformat',
@@ -201,7 +194,7 @@ class Rename :
                 )
         
         # help
-        parser.add_argument (
+        parser.add_argument(
                 '-h',
                 '-help',
                 '--help',
@@ -209,7 +202,7 @@ class Rename :
                 )
        
         # version
-        parser.add_argument (
+        parser.add_argument(
                 '--version',
                 action = 'store_true'
                 )
@@ -220,8 +213,7 @@ class Rename :
         self.path = self.args['path']
         
     # what happen on terminal?! 
-    def cli (self) :
-
+    def cli(self):
         if self.args['verbos'] :
             self.Verbos = True
 
@@ -234,7 +226,7 @@ class Rename :
 
             for item in sys.argv :
                 #pattern to find timeformat string (%strftime)
-                if re.match('^%[^\n]*',item) :
+                if re.match('^%[^\n]*', item) :
                     self.format = item
                     self.path.remove(item)
 
@@ -268,7 +260,6 @@ class Rename :
             )
 
 def main():
-
     RenameIt = Rename()
     RenameIt.get_parser()  
     RenameIt.cli()
